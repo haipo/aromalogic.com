@@ -10,10 +10,10 @@
         <v-img
           class="mx-auto mb-4"
           max-width="100"
-          src="@/assets/logo.svg"
+          src="@/assets/logo.png"
         ></v-img>
 
-        <h2 class="text-h5 mb-4">芳策雲 AromaMind</h2>
+        <h2 class="text-h5 mb-4">芳療智匯 AromaMind</h2>
         <div class="text-subtitle-1 text-medium-emphasis">歡迎回來！請登入您的帳號</div>
 
         <v-btn
