@@ -1,0 +1,20 @@
+ACC‑1
+
+登入畫面:
+
+畫面布局:
+Logo圖片: 目前無圖片,先以純文字Logo代替
+Logo圖片下文字:登入芳智雲
+input box:帳號
+input box:密碼
+button:送出
+
+google login button:Google帳號登入
+
+以上內容包裝在一個div內,並且水平垂直置中在畫面上
+其他div或是元件拆分需求請自行決定
+
+
+
+
+

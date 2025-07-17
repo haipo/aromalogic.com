@@ -1,0 +1,64 @@
+# AromaMind MVP Development Tasks
+
+## Phase 1: Frontend Foundation & Core Modules (M2 Design, M3 Alpha)
+
+### 1. Project Setup & UI Framework
+- [ ] Initialize Vue 3 + Vite + TypeScript project.
+- [ ] **(M2)** Setup basic UI framework/component library (e.g., Vuetify, Element Plus, or a custom one with Tailwind CSS).
+- [ ] **(M2)** Define global styles, layout structure (e.g., main layout, navigation).
+
+### 2. Authentication (ACC)
+- [ ] **(M3)** Setup Firebase SDK and configuration.
+- [ ] **(M3)** Create Login/Register views.
+- [ ] **(M3)** Implement Email/Password registration flow (ACC-2).
+- [ ] **(M3)** Implement Email verification flow (ACC-2).
+- [ ] **(M3)** Implement Login flow (ACC-2).
+- [ ] **(M3)** Implement "Forgot Password" flow (ACC-2).
+- [ ] **(M3)** Implement Google OAuth login flow (ACC-1).
+- [ ] **(M3)** Create a Pinia store for authentication state management.
+- [ ] **(M3)** Implement route guards to protect authenticated routes.
+
+### 3. Client Management (CUS)
+- [ ] **(M3)** Create the data model for clients in Firestore.
+- [ ] **(M3)** Create a "Client List" view.
+- [ ] **(M3)** Implement client search functionality (CUS-3).
+- [ ] **(M3)** Create a "Client Details" view.
+- [ ] **(M3)** Create a "Create/Edit Client" form with all required fields and validation (CUS-1).
+- [ ] **(M3)** Implement the tagging system UI on the client form (CUS-2).
+- [ ] **(M3)** Create a Pinia store for client data management.
+
+### 4. Consultation Management (CON)
+- [ ] **(M3)** Create the data model for consultations in Firestore.
+- [ ] **(M3)** In the "Client Details" view, add a section for consultation history.
+- [ ] **(M3)** Create a "Create Consultation" view/form.
+- [ ] **(M3)** Implement fields for "chief complaint" and "lifestyle advice" (CON-1).
+- [ ] **(M3)** Implement single photo upload to Firebase Storage (CON-1).
+- [ ] **(M3)** Implement the formula table UI (add/remove oils, enter drops) (CON-1).
+- [ ] **(M3)** Implement automatic concentration calculation and display (CON-2).
+- [ ] **(M3)** Create a Pinia store for consultation data.
+
+## Phase 2: Advanced Features (M4 Beta)
+
+### 5. AI Integration (AI)
+- [ ] **(M4)** Setup Firebase Functions.
+- [ ] **(M4)** Create a function to handle AI-based formula suggestions (embedding + vector search) (AI-1).
+- [ ] **(M4)** Integrate the AI suggestion feature into the "Create Consultation" view (AI-1).
+
+### 6. PDF Generation (PDF)
+- [ ] **(M4)** Choose and integrate a client-side PDF generation library (e.g., pdf-lib) (PDF-1).
+- [ ] **(M4)** Design the PDF report template (PDF-1).
+- [ ] **(M4)** Implement the "Generate PDF" functionality from the consultation view (PDF-1).
+- [ ] **(M4)** Implement the "Email PDF" functionality (via Firebase Functions + SendGrid) (PDF-1). (Temporarily skipped as per user request)
+
+### 7. Permissions & Multi-tenancy (PER)
+- [ ] **(M4)** Implement Firestore security rules for individual user data isolation (PER-1).
+- [ ] **(M4)** Design and implement the data model for "Companies" (PER-2).
+- [ ] **(M4)** Implement UI for company admin to manage sub-accounts (PER-2).
+- [ ] **(M4)** Adjust Firestore security rules for company data sharing (PER-2).
+
+## Phase 3: Launch Prep (M5 Launch)
+- [ ] **(M5)** Finalize UI/UX and ensure Responsive Web Design (RWD).
+- [ ] **(M5)** Conduct end-to-end testing for all user flows.
+- [ ] **(M5)** Setup production Firebase environment.
+- [ ] **(M5)** Build and deploy the application.
+- [ ] **(M5)** Setup monitoring and logging. (Requires manual configuration in Firebase Console and Google Cloud Console for detailed logs, error reporting, performance monitoring, and budget alerts.)
