@@ -187,9 +187,13 @@ const submitForm = async () => {
     await setDoc(customerDocRef, customerData);
     console.log("客戶資料已成功儲存，文件 ID: ", phoneWithoutPlus);
     router.push('/'); // Redirect to home page after successful submission
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("儲存客戶資料時發生錯誤: ", error);
-    errorMessage.value = `儲存失敗: ${error.message}`;
+    if (error instanceof Error) {
+      errorMessage.value = `儲存失敗: ${error.message}`;
+    } else {
+      errorMessage.value = "儲存失敗: 未知錯誤";
+    }
     showSnackbar.value = true;
   } finally {
     loading.value = false;

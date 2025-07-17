@@ -1,26 +1,12 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <v-container class="fill-height d-flex align-center">
-        <v-toolbar-title class="text-left flex-grow-1">
-          芳療智匯 AromaMind
-        </v-toolbar-title>
-
-        <v-spacer></v-spacer>
-
-        <v-img
-          alt="AromaMind Logo"
-          class="shrink mx-auto"
-          contain
-          src="@/assets/logo.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-spacer></v-spacer>
-
-        <span class="text-right flex-grow-1 mr-4">{{ userEmail }}</span>
-      </v-container>
+    <v-app-bar app color="primary">
+      <v-btn to="/" variant="text" class="text-h6">
+        芳療智匯 AromaMind
+      </v-btn>
+      <v-spacer></v-spacer>
+      <span class="mr-4">{{ userEmail }}</span>
+      <v-btn @click="logout" variant="text">登出</v-btn>
     </v-app-bar>
 
     <v-main>
@@ -33,10 +19,13 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 const userEmail = ref<string | null>(null);
 let unsubscribe: () => void;
+const router = useRouter();
 
 onMounted(() => {
   const auth = getAuth();
@@ -54,4 +43,13 @@ onUnmounted(() => {
     unsubscribe();
   }
 });
+
+const logout = async () => {
+  try {
+    await signOut(getAuth());
+    router.push('/login');
+  } catch (error) {
+    console.error("登出失敗: ", error);
+  }
+};
 </script>
