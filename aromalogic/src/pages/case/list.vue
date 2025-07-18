@@ -57,6 +57,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 interface Customer {
   id: string;
@@ -70,6 +71,7 @@ const allCustomers = ref<Customer[]>([]);
 const loading = ref(true);
 const errorMessage = ref<string | null>(null);
 const searchQuery = ref('');
+const router = useRouter();
 
 // Fetch customer data on component mount
 onMounted(async () => {
@@ -111,11 +113,9 @@ const filteredCustomers = computed(() => {
   );
 });
 
-// Placeholder function for creating a new case
+// Navigate to the new case page with the customer's ID
 const createNewCase = (customer: Customer) => {
-  console.log(`觸發新增個案功能，客戶: ${customer.name} (ID: ${customer.id})`);
-  // Future implementation will navigate to a new case page, e.g.:
-  // router.push(`/case/new?customerId=${customer.id}`);
+  router.push({ name: '/case/new', query: { customerId: customer.id } });
 };
 
 </script>
