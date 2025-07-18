@@ -36,6 +36,7 @@
                   v-model.number="oil.dosage"
                   label="劑量 (滴)"
                   type="number"
+                  min="0"
                   variant="underlined"
                   hide-details
                 ></v-text-field>

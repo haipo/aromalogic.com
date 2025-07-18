@@ -7,6 +7,10 @@
         <v-btn color="primary" @click="addOil" prepend-icon="mdi-plus">
           新增精油
         </v-btn>
+        <v-btn color="secondary" @click="triggerFileInput" prepend-icon="mdi-upload" class="ml-2">
+          匯入精油
+        </v-btn>
+        <input type="file" ref="fileInput" style="display: none;" @change="handleFileUpload" accept=".csv,.txt" />
       </v-card-title>
 
       <v-card-text>
@@ -86,7 +90,8 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection, getDocs, doc, updateDoc, FirestoreError } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, FirestoreError } from 'firebase/firestore';
+import Papa from 'papaparse';
 
 interface EssentialOil {
   id: string;
@@ -103,6 +108,86 @@ const oils = ref<EssentialOil[]>([]);
 const loading = ref(true);
 const isSaving = ref(false);
 const errorMessage = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const triggerFileInput = () => {
+  fileInput.value?.click();
+};
+
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+
+  if (file) {
+    loading.value = true;
+    errorMessage.value = null;
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const db = getFirestore();
+        const oilCollection = collection(db, 'essential_oils');
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const data of results.data) {
+          try {
+            // Ensure oil_id exists and is a string
+            const oilData = data as EssentialOil;
+            if (oilData.oil_id) {
+              // Process symptoms field: convert comma-separated string to array
+              if (typeof oilData.symptoms === 'string') {
+                oilData.symptoms = oilData.symptoms.split(',').map(s => s.trim()).filter(s => s.length > 0);
+              }
+              await setDoc(doc(oilCollection, oilData.oil_id), oilData, { merge: true });
+              successCount++;
+            } else {
+              console.warn('Skipping row due to missing oil_id:', data);
+              errorCount++;
+            }
+          } catch (e) {
+            console.error('Error adding/updating document:', data, e);
+            errorCount++;
+          }
+        }
+        errorMessage.value = `匯入完成：成功 ${successCount} 筆，失敗 ${errorCount} 筆。`;
+        loading.value = false;
+        // Refresh the list after import
+        await fetchOils();
+      },
+      error: (err: Error) => {
+        errorMessage.value = `檔案解析失敗: ${err.message}`;
+        loading.value = false;
+      }
+    });
+  }
+};
+
+const fetchOils = async () => {
+  loading.value = true;
+  try {
+    const db = getFirestore();
+    const oilCollection = collection(db, 'essential_oils');
+    const querySnapshot = await getDocs(oilCollection);
+    oils.value = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...(doc.data() as Omit<EssentialOil, 'id'>),
+    }));
+  } catch (error) {
+    console.error("讀取精油資料時發生錯誤: ", error);
+    if (error instanceof FirestoreError && error.code === 'permission-denied') {
+      errorMessage.value = "權限不足，無法讀取精油資料。請確認您的 Firestore 安全性規則是否正確設定。";
+    } else {
+      errorMessage.value = "讀取資料時發生未預期的錯誤。";
+    }
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await fetchOils();
+});
 
 const editingId = ref<string | null>(null);
 const editingItem = ref<EssentialOil | null>(null);
