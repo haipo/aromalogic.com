@@ -92,7 +92,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { auth } from '@/plugins/firebase';
+import { getAuth } from "firebase/auth";
 import { useRouter } from 'vue-router';
 
 interface Customer {
@@ -117,6 +117,7 @@ const authDialogMessage = ref('');
 const router = useRouter();
 
 onMounted(async () => {
+  const auth = getAuth();
   const user = auth.currentUser;
   if (!user) {
     console.error("使用者未登入，無法讀取客戶資料");

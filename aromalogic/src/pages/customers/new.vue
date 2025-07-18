@@ -117,7 +117,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { auth } from '@/plugins/firebase';
+import { getAuth } from 'firebase/auth';
 
 const form = ref<any>(null);
 const valid = ref(true);
@@ -155,6 +155,7 @@ const submitForm = async () => {
   errorMessage.value = ''; // Clear previous errors
   showSnackbar.value = false;
 
+  const auth = getAuth();
   const user = auth.currentUser;
 
   if (!user) {
@@ -186,7 +187,7 @@ const submitForm = async () => {
 
     await setDoc(customerDocRef, customerData);
     console.log("客戶資料已成功儲存，文件 ID: ", phoneWithoutPlus);
-    router.push('/'); // Redirect to home page after successful submission
+    router.push('/customers/list'); // Redirect to home page after successful submission
   } catch (error: unknown) {
     console.error("儲存客戶資料時發生錯誤: ", error);
     if (error instanceof Error) {
