@@ -35,9 +35,9 @@
             <v-text-field v-if="editingId === item.id && editingItem" v-model="editingItem.name_latin" dense hide-details></v-text-field>
             <span v-else>{{ item.name_latin }}</span>
           </template>
-          <template v-slot:item.name_zh-TW="{ item }">
-            <v-text-field v-if="editingId === item.id && editingItem" v-model="editingItem['name_zh-TW']" dense hide-details></v-text-field>
-            <span v-else>{{ item['name_zh-TW'] }}</span>
+          <template v-slot:item.name_zh_tw="{ item }">
+            <v-text-field v-if="editingId === item.id && editingItem" v-model="editingItem['name_zh_tw']" dense hide-details></v-text-field>
+            <span v-else>{{ item['name_zh_tw'] }}</span>
           </template>
           <template v-slot:item.oil_type="{ item }">
             <v-text-field v-if="editingId === item.id && editingItem" v-model="editingItem.oil_type" dense hide-details></v-text-field>
@@ -107,7 +107,16 @@ const errorMessage = ref<string | null>(null);
 const editingId = ref<string | null>(null);
 const editingItem = ref<EssentialOil | null>(null);
 
-const headers = ref([
+// Define a type for the header items to ensure correct 'align' type
+interface DataTableHeader {
+  title: string;
+  key: string;
+  align?: 'start' | 'end' | 'center';
+  sortable?: boolean;
+  width?: string;
+}
+
+const headers = ref<DataTableHeader[]>([
   { title: '編號', key: 'oil_id' },
   { title: '分類', key: 'type' },
   { title: '中文名稱', key: 'name_zh_tw' },

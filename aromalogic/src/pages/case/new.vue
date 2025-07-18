@@ -19,16 +19,19 @@
             <!-- 3-2: Essential Oil Formula -->
             <h3 class="text-h6 mb-2">精油配方</h3>
             <v-row v-for="(oil, index) in caseRecord.essential_oils" :key="index" align="center">
-              <v-col cols="12" sm="5">
+              <v-col cols="12" sm="4">
                 <v-autocomplete
                   v-model="oil.name"
-                  :items="essentialOilOptions"
+                  :items="essentialOilsFullData"
+                  :item-title="item => `${item['name_zh_tw']} (${item.name})`"
+                  item-value="name"
                   label="精油名稱"
                   variant="underlined"
                   hide-details
+                  @update:modelValue="onOilNameChange(oil)"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="6" sm="3">
+              <v-col cols="5" sm="2">
                 <v-text-field
                   v-model.number="oil.dosage"
                   label="劑量 (滴)"
@@ -37,13 +40,18 @@
                   hide-details
                 ></v-text-field>
               </v-col>
-              <v-col cols="6" sm="3">
-                <v-text-field
+              <v-col cols="7" sm="5">
+                 <v-combobox
                   v-model="oil.expected_effect"
+                  :items="getSymptomsForOil(oil.name)"
                   label="預期處理症狀"
+                  multiple
+                  chips
+                  closable-chips
                   variant="underlined"
                   hide-details
-                ></v-text-field>
+                  :disabled="!oil.name"
+                ></v-combobox>
               </v-col>
               <v-col cols="12" sm="1">
                 <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeEssentialOil(index)"></v-btn>
@@ -147,9 +155,9 @@ interface Customer {
 }
 
 interface EssentialOilEntry {
-  name: string | null;
+  name: string | null; // This will now store the English name (the value)
   dosage: number | null;
-  expected_effect: string;
+  expected_effect: string[];
 }
 
 interface VegetableOilEntry {
@@ -169,11 +177,11 @@ interface CaseRecord {
 const route = useRoute();
 const customer = ref<Customer | null>(null);
 const loadingCustomer = ref(true);
-const essentialOilOptions = ref<string[]>([]);
+const essentialOilsFullData = ref<any[]>([]); // To store full oil data for the dropdown
 
 const caseRecord = reactive<CaseRecord>({
   symptoms_text: '',
-  essential_oils: [{ name: null, dosage: null, expected_effect: '' }],
+  essential_oils: [{ name: null, dosage: null, expected_effect: [] }],
   vegetable_oils: [{ name: '', dosage_ml: null, expected_effect: '' }],
   lifestyle_advice: '',
 });
@@ -209,11 +217,11 @@ onMounted(async () => {
     loadingCustomer.value = false;
   }
 
-  // Fetch essential oil names for autocomplete
+  // Fetch essential oil full data for autocomplete
   try {
     const oilCollection = collection(db, 'essential_oils');
     const querySnapshot = await getDocs(oilCollection);
-    essentialOilOptions.value = querySnapshot.docs.map(doc => doc.data()['name_zh_tw'] || doc.data().name);
+    essentialOilsFullData.value = querySnapshot.docs.map(doc => doc.data());
   } catch (error) {
     console.error("讀取精油列表失敗: ", error);
   }
@@ -221,11 +229,22 @@ onMounted(async () => {
 
 // --- Essential Oil Management ---
 const addEssentialOil = () => {
-  caseRecord.essential_oils.push({ name: null, dosage: null, expected_effect: '' });
+  caseRecord.essential_oils.push({ name: null, dosage: null, expected_effect: [] });
 };
 
 const removeEssentialOil = (index: number) => {
   caseRecord.essential_oils.splice(index, 1);
+};
+
+const getSymptomsForOil = (oilName: string | null): string[] => {
+  if (!oilName) return [];
+  // Search by the English name, which is the value of the autocomplete
+  const selectedOil = essentialOilsFullData.value.find(o => o.name === oilName);
+  return selectedOil ? selectedOil.symptoms || [] : [];
+};
+
+const onOilNameChange = (oilEntry: EssentialOilEntry) => {
+  oilEntry.expected_effect = []; // Reset symptoms when a new oil is chosen
 };
 
 // --- Vegetable Oil Management ---
