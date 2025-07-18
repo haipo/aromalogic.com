@@ -35,41 +35,28 @@
 <script setup lang="ts">
   const links = [
     {
-      href: 'https://vuetifyjs.com/',
+      href: '/case/list',
       icon: 'mdi-doctor',
-      subtitle: 'Learn about all things Vuetify in our documentation.',
-      title: '問診系統',
+      subtitle: '選擇客戶，輸入主訴並設定配方',
+      title: '個案系統',
     },
     {
       href: '/customers/list',
       icon: 'mdi-account-box-outline',
-      subtitle: 'Explore available framework Features.',
+      subtitle: '客戶資料新增、查詢與編輯',
       title: '客戶管理',
     },
-    // {
-    //   href: '/customers/new',
-    //   icon: 'mdi-account-box-plus-outline',
-    //   subtitle: 'Explore available framework Features.',
-    //   title: '客戶管理-新增客戶',
-    // },
-    // {
-    //   href: '/customers/edit',
-    //   icon: 'mdi-account-box-edit-outline',
-    //   subtitle: 'Explore available framework Features.',
-    //   title: '客戶管理-客戶資料修改',
-    // },
-    
     {
       href: 'https://vuetifyjs.com/components/all',
       icon: 'mdi-widgets-outline',
-      subtitle: 'Discover components in the API Explorer.',
+      subtitle: '常用配方的編輯與查詢',
       title: '配方資料庫',
     },
     {
-      href: 'https://discord.vuetifyjs.com',
+      href: '/oil/list',
       icon: 'mdi-account-group-outline',
       subtitle: 'Connect with Vuetify developers.',
-      title: '社群',
+      title: '精油資料庫',
     },
   ]
 </script>
