@@ -82,6 +82,19 @@
 
             <v-divider class="my-6"></v-divider>
 
+            <!-- Concentration Calculation -->
+            <h3 class="text-h6 mb-2">濃度計算</h3>
+            <v-card variant="outlined" class="mb-6 pa-4">
+              <v-card-text v-if="calculatedConcentration !== null">
+                <p class="text-h5 text-center">精油濃度: <span class="font-weight-bold text-primary">{{ calculatedConcentration }}%</span></p>
+              </v-card-text>
+              <v-card-text v-else>
+                <p class="text-center text-grey">請輸入精油滴數與植物油劑量以計算濃度。</p>
+              </v-card-text>
+            </v-card>
+
+            <v-divider class="my-6"></v-divider>
+
             <!-- 3-4: Lifestyle Advice -->
             <h3 class="text-h6 mb-2">生活建議</h3>
             <v-textarea
@@ -134,7 +147,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -185,6 +198,24 @@ const caseRecord = reactive<CaseRecord>({
   essential_oils: [{ name: null, dosage: null, expected_effect: [] }],
   vegetable_oils: [{ name: '', dosage_ml: null, expected_effect: '' }],
   lifestyle_advice: '',
+});
+
+// Computed property for concentration calculation
+const calculatedConcentration = computed(() => {
+  const totalEssentialOilDrops = caseRecord.essential_oils.reduce((sum, oil) => {
+    return sum + (oil.dosage && oil.dosage > 0 ? oil.dosage : 0);
+  }, 0);
+
+  const totalVegetableOilMl = caseRecord.vegetable_oils.reduce((sum, oil) => {
+    return sum + (oil.dosage_ml && oil.dosage_ml > 0 ? oil.dosage_ml : 0);
+  }, 0);
+
+  if (totalEssentialOilDrops > 0 && totalVegetableOilMl > 0) {
+    const concentration =   totalEssentialOilDrops / (totalVegetableOilMl * 20) * 100;
+    return concentration.toFixed(2); // Format to 2 decimal places
+  } else {
+    return null;
+  }
 });
 
 // --- Functions ---
