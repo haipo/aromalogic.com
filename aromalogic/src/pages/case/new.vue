@@ -7,103 +7,126 @@
         <v-card>
           <v-card-title>精油調配紀錄表</v-card-title>
           <v-card-text>
-            <!-- 3-1: Symptoms -->
-            <v-textarea
-              v-model="caseRecord.symptoms_text"
-              label="處理症狀"
-              rows="3"
-              variant="outlined"
-              class="mb-4"
-            ></v-textarea>
+            <v-row>
+              <v-col cols="12" md="7">
+                <!-- 3-1: Symptoms -->
+                <v-textarea
+                  v-model="caseRecord.symptoms_text"
+                  label="處理症狀"
+                  rows="3"
+                  variant="outlined"
+                  class="mb-4"
+                ></v-textarea>
 
-            <!-- 3-2: Essential Oil Formula -->
-            <h3 class="text-h6 mb-2">精油配方</h3>
-            <v-row v-for="(oil, index) in caseRecord.essential_oils" :key="index" align="center">
-              <v-col cols="12" sm="4">
-                <v-autocomplete
-                  v-model="oil.name"
-                  :items="essentialOilsFullData"
-                  :item-title="item => `${item['name_zh_tw']} (${item.name})`"
-                  item-value="name"
-                  label="精油名稱"
-                  variant="underlined"
-                  hide-details
-                  @update:modelValue="onOilNameChange(oil)"
-                ></v-autocomplete>
+                <!-- 3-2: Essential Oil Formula -->
+                <h3 class="text-h6 mb-2">精油配方</h3>
+                <v-row v-for="(oil, index) in caseRecord.essential_oils" :key="index" align="center">
+                  <v-col cols="12" sm="4">
+                    <v-autocomplete
+                      v-model="oil.name"
+                      :items="essentialOilsFullData"
+                      :item-title="item => `${item['name_zh_tw']} (${item.name})`"
+                      item-value="name"
+                      label="精油名稱"
+                      variant="underlined"
+                      hide-details
+                      @update:modelValue="onOilNameChange(oil)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="5" sm="2">
+                    <v-text-field
+                      v-model.number="oil.dosage"
+                      label="劑量 (滴)"
+                      type="number"
+                      min="0"
+                      variant="underlined"
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="7" sm="5">
+                     <v-combobox
+                      v-model="oil.expected_effect"
+                      :items="getSymptomsForOil(oil.name)"
+                      label="預期處理症狀"
+                      multiple
+                      chips
+                      closable-chips
+                      variant="underlined"
+                      hide-details
+                      :disabled="!oil.name"
+                    ></v-combobox>
+                  </v-col>
+                  <v-col cols="12" sm="1">
+                    <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeEssentialOil(index)"></v-btn>
+                  </v-col>
+                </v-row>
+                <v-btn text color="primary" @click="addEssentialOil" class="mt-2">+ 新增精油</v-btn>
+
+                <v-divider class="my-6"></v-divider>
+
+                <!-- 3-3: Vegetable Oil -->
+                <h3 class="text-h6 mb-2">植物油</h3>
+                 <v-row v-for="(oil, index) in caseRecord.vegetable_oils" :key="index" align="center">
+                    <v-col cols="12" sm="5">
+                        <v-text-field v-model="oil.name" label="植物油名稱" variant="underlined" hide-details></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="3">
+                        <v-text-field v-model.number="oil.dosage_ml" label="劑量 (ml)" type="number" variant="underlined" hide-details></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="3">
+                        <v-text-field v-model="oil.expected_effect" label="預期功效" variant="underlined" hide-details></v-text-field>
+                    </v-col>
+                     <v-col cols="12" sm="1">
+                        <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeVegetableOil(index)"></v-btn>
+                    </v-col>
+                </v-row>
+                <v-btn text color="primary" @click="addVegetableOil" class="mt-2">+ 新增植物油</v-btn>
+
+                <v-divider class="my-6"></v-divider>
+
+                <!-- Concentration Calculation -->
+                <h3 class="text-h6 mb-2">濃度計算</h3>
+                <v-card variant="outlined" class="mb-6 pa-4">
+                  <v-card-text v-if="calculatedConcentration !== null">
+                    <p class="text-h5 text-center">精油濃度: <span class="font-weight-bold text-primary">{{ calculatedConcentration }}%</span></p>
+                  </v-card-text>
+                  <v-card-text v-else>
+                    <p class="text-center text-grey">請輸入精油滴數與植物油劑量以計算濃度。</p>
+                  </v-card-text>
+                </v-card>
+
+                <v-divider class="my-6"></v-divider>
+
+                <!-- 3-4: Lifestyle Advice -->
+                <h3 class="text-h6 mb-2">生活建議</h3>
+                <v-textarea
+                  v-model="caseRecord.lifestyle_advice"
+                  label="生活建議"
+                  rows="4"
+                  variant="outlined"
+                ></v-textarea>
               </v-col>
-              <v-col cols="5" sm="2">
-                <v-text-field
-                  v-model.number="oil.dosage"
-                  label="劑量 (滴)"
-                  type="number"
-                  min="0"
-                  variant="underlined"
-                  hide-details
-                ></v-text-field>
-              </v-col>
-              <v-col cols="7" sm="5">
-                 <v-combobox
-                  v-model="oil.expected_effect"
-                  :items="getSymptomsForOil(oil.name)"
-                  label="預期處理症狀"
-                  multiple
-                  chips
-                  closable-chips
-                  variant="underlined"
-                  hide-details
-                  :disabled="!oil.name"
-                ></v-combobox>
-              </v-col>
-              <v-col cols="12" sm="1">
-                <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeEssentialOil(index)"></v-btn>
+              <v-col cols="12" md="5">
+                <v-card>
+                  <v-tabs v-model="tab" bg-color="primary">
+                    <v-tab value="classic">經典配方</v-tab>
+                    <v-tab value="ai">AI助手</v-tab>
+                  </v-tabs>
+                  <v-card-text>
+                    <v-window v-model="tab">
+                      <v-window-item value="classic">
+                        <!-- Content for Classic Formulas -->
+                        <p>經典配方內容</p>
+                      </v-window-item>
+                      <v-window-item value="ai">
+                        <!-- Content for AI Assistant -->
+                        <p>AI助手內容</p>
+                      </v-window-item>
+                    </v-window>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
-            <v-btn text color="primary" @click="addEssentialOil" class="mt-2">+ 新增精油</v-btn>
-
-            <v-divider class="my-6"></v-divider>
-
-            <!-- 3-3: Vegetable Oil -->
-            <h3 class="text-h6 mb-2">植物油</h3>
-             <v-row v-for="(oil, index) in caseRecord.vegetable_oils" :key="index" align="center">
-                <v-col cols="12" sm="5">
-                    <v-text-field v-model="oil.name" label="植物油名稱" variant="underlined" hide-details></v-text-field>
-                </v-col>
-                <v-col cols="6" sm="3">
-                    <v-text-field v-model.number="oil.dosage_ml" label="劑量 (ml)" type="number" variant="underlined" hide-details></v-text-field>
-                </v-col>
-                <v-col cols="6" sm="3">
-                    <v-text-field v-model="oil.expected_effect" label="預期功效" variant="underlined" hide-details></v-text-field>
-                </v-col>
-                 <v-col cols="12" sm="1">
-                    <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeVegetableOil(index)"></v-btn>
-                </v-col>
-            </v-row>
-            <v-btn text color="primary" @click="addVegetableOil" class="mt-2">+ 新增植物油</v-btn>
-
-            <v-divider class="my-6"></v-divider>
-
-            <!-- Concentration Calculation -->
-            <h3 class="text-h6 mb-2">濃度計算</h3>
-            <v-card variant="outlined" class="mb-6 pa-4">
-              <v-card-text v-if="calculatedConcentration !== null">
-                <p class="text-h5 text-center">精油濃度: <span class="font-weight-bold text-primary">{{ calculatedConcentration }}%</span></p>
-              </v-card-text>
-              <v-card-text v-else>
-                <p class="text-center text-grey">請輸入精油滴數與植物油劑量以計算濃度。</p>
-              </v-card-text>
-            </v-card>
-
-            <v-divider class="my-6"></v-divider>
-
-            <!-- 3-4: Lifestyle Advice -->
-            <h3 class="text-h6 mb-2">生活建議</h3>
-            <v-textarea
-              v-model="caseRecord.lifestyle_advice"
-              label="生活建議"
-              rows="4"
-              variant="outlined"
-            ></v-textarea>
-
           </v-card-text>
            <v-card-actions class="pa-4">
                 <v-spacer></v-spacer>
@@ -192,6 +215,7 @@ const route = useRoute();
 const customer = ref<Customer | null>(null);
 const loadingCustomer = ref(true);
 const essentialOilsFullData = ref<any[]>([]); // To store full oil data for the dropdown
+const tab = ref('classic'); // For tab control
 
 const caseRecord = reactive<CaseRecord>({
   symptoms_text: '',
