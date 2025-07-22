@@ -106,23 +106,17 @@
                   variant="outlined"
                 ></v-textarea>
               </v-col>
-              <v-col cols="12" md="5">
-                <v-card>
-                  <v-tabs v-model="tab" bg-color="primary">
-                    <v-tab value="classic">經典配方</v-tab>
-                    <v-tab value="ai">AI助手</v-tab>
-                  </v-tabs>
+              <v-col cols="12" md="5" class="d-flex flex-column">
+                <v-card class="mb-4 flex-grow-1">
+                  <v-card-title>經典配方</v-card-title>
                   <v-card-text>
-                    <v-window v-model="tab">
-                      <v-window-item value="classic">
-                        <!-- Content for Classic Formulas -->
-                        <p>經典配方內容</p>
-                      </v-window-item>
-                      <v-window-item value="ai">
-                        <!-- Content for AI Assistant -->
-                        <p>AI助手內容</p>
-                      </v-window-item>
-                    </v-window>
+                    <p>經典配方內容</p>
+                  </v-card-text>
+                </v-card>
+                <v-card class="flex-grow-1">
+                  <v-card-title>AI助手</v-card-title>
+                  <v-card-text>
+                    <p>AI助手內容</p>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -215,7 +209,6 @@ const route = useRoute();
 const customer = ref<Customer | null>(null);
 const loadingCustomer = ref(true);
 const essentialOilsFullData = ref<any[]>([]); // To store full oil data for the dropdown
-const tab = ref('classic'); // For tab control
 
 const caseRecord = reactive<CaseRecord>({
   symptoms_text: '',
