@@ -8,7 +8,7 @@
           <v-card-title>精油調配紀錄表</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="7">
+              <v-col cols="12" md="8">
                 <!-- 3-1: Symptoms -->
                 <v-textarea
                   v-model="caseRecord.symptoms_text"
@@ -76,6 +76,7 @@
                       label="植物油名稱"
                       variant="underlined"
                       hide-details
+                      @update:modelValue="onVegetableOilNameChange(oil)"
                     >
                       <template v-slot:selection="{ item }">
                         <span v-if="item.raw">{{ item.raw['name_zh_tw'] }} ({{ item.raw.name }})</span>
@@ -86,7 +87,17 @@
                         <v-text-field v-model.number="oil.dosage_ml" label="劑量 (ml)" type="number" variant="underlined" hide-details></v-text-field>
                     </v-col>
                     <v-col cols="6" sm="3">
-                        <v-text-field v-model="oil.expected_effect" label="預期功效" variant="underlined" hide-details></v-text-field>
+                        <v-combobox
+                          v-model="oil.expected_effect"
+                          :items="getSymptomsForCarrierOil(oil.name)"
+                          label="預期功效"
+                          multiple
+                          chips
+                          closable-chips
+                          variant="underlined"
+                          hide-details
+                          :disabled="!oil.name"
+                        ></v-combobox>
                     </v-col>
                      <v-col cols="12" sm="1">
                         <v-btn icon="mdi-delete-outline" size="small" variant="text" @click="removeVegetableOil(index)"></v-btn>
@@ -118,7 +129,7 @@
                   variant="outlined"
                 ></v-textarea>
               </v-col>
-              <v-col cols="12" md="5" class="d-flex flex-column">
+              <v-col cols="12" md="4" class="d-flex flex-column">
                 <v-card class="mb-4 flex-grow-1">
                   <v-card-title>經典配方</v-card-title>
                   <v-card-text>
@@ -206,7 +217,7 @@ interface EssentialOilEntry {
 interface VegetableOilEntry {
     name: string;
     dosage_ml: number | null;
-    expected_effect: string;
+    expected_effect: string[];
 }
 
 interface CaseRecord {
@@ -320,11 +331,21 @@ const onOilNameChange = (oilEntry: EssentialOilEntry) => {
 
 // --- Vegetable Oil Management ---
 const addVegetableOil = () => {
-    caseRecord.vegetable_oils.push({ name: '', dosage_ml: null, expected_effect: '' });
+    caseRecord.vegetable_oils.push({ name: '', dosage_ml: null, expected_effect: [] });
 };
 
 const removeVegetableOil = (index: number) => {
     caseRecord.vegetable_oils.splice(index, 1);
+};
+
+const getSymptomsForCarrierOil = (oilName: string | null): string[] => {
+  if (!oilName) return [];
+  const selectedOil = carrierOilsFullData.value.find(o => o.name === oilName);
+  return selectedOil ? selectedOil.symptoms || [] : [];
+};
+
+const onVegetableOilNameChange = (oilEntry: VegetableOilEntry) => {
+  oilEntry.expected_effect = []; // Reset symptoms when a new oil is chosen
 };
 
 // --- Save Logic (Placeholder) ---
