@@ -68,8 +68,20 @@
                 <h3 class="text-h6 mb-2">植物油</h3>
                  <v-row v-for="(oil, index) in caseRecord.vegetable_oils" :key="index" align="center">
                     <v-col cols="12" sm="5">
-                        <v-text-field v-model="oil.name" label="植物油名稱" variant="underlined" hide-details></v-text-field>
-                    </v-col>
+                    <v-autocomplete
+                      v-model="oil.name"
+                      :items="carrierOilsFullData"
+                      :item-title="item => `${item['name_zh_tw']} (${item.name})`"
+                      item-value="name"
+                      label="植物油名稱"
+                      variant="underlined"
+                      hide-details
+                    >
+                      <template v-slot:selection="{ item }">
+                        <span v-if="item.raw">{{ item.raw['name_zh_tw'] }} ({{ item.raw.name }})</span>
+                      </template>
+                    </v-autocomplete>
+                </v-col>
                     <v-col cols="6" sm="3">
                         <v-text-field v-model.number="oil.dosage_ml" label="劑量 (ml)" type="number" variant="underlined" hide-details></v-text-field>
                     </v-col>
@@ -209,6 +221,7 @@ const route = useRoute();
 const customer = ref<Customer | null>(null);
 const loadingCustomer = ref(true);
 const essentialOilsFullData = ref<any[]>([]); // To store full oil data for the dropdown
+const carrierOilsFullData = ref<any[]>([]); // To store full carrier oil data for the dropdown
 
 const caseRecord = reactive<CaseRecord>({
   symptoms_text: '',
@@ -273,6 +286,15 @@ onMounted(async () => {
     essentialOilsFullData.value = querySnapshot.docs.map(doc => doc.data());
   } catch (error) {
     console.error("讀取精油列表失敗: ", error);
+  }
+
+  // Fetch carrier oil full data for autocomplete
+  try {
+    const carrierOilCollection = collection(db, 'carrier_oils');
+    const querySnapshot = await getDocs(carrierOilCollection);
+    carrierOilsFullData.value = querySnapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error("讀取植物油列表失敗: ", error);
   }
 });
 
