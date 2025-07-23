@@ -237,7 +237,7 @@ const carrierOilsFullData = ref<any[]>([]); // To store full carrier oil data fo
 const caseRecord = reactive<CaseRecord>({
   symptoms_text: '',
   essential_oils: [{ name: null, dosage: null, expected_effect: [] }],
-  vegetable_oils: [{ name: '', dosage_ml: null, expected_effect: '' }],
+  vegetable_oils: [{ name: '', dosage_ml: null, expected_effect: [] }],
   lifestyle_advice: '',
 });
 

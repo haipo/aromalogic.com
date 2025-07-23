@@ -92,6 +92,7 @@
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, FirestoreError } from 'firebase/firestore';
 import Papa from 'papaparse';
+import type { ParseResult } from 'papaparse';
 
 interface EssentialOil {
   id: string;
@@ -124,7 +125,7 @@ const handleFileUpload = (event: Event) => {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: async (results) => {
+      complete: async (results: ParseResult<EssentialOil>) => {
         const db = getFirestore();
         const oilCollection = collection(db, 'essential_oils');
         let successCount = 0;
@@ -137,7 +138,7 @@ const handleFileUpload = (event: Event) => {
             if (oilData.oil_id) {
               // Process symptoms field: convert comma-separated string to array
               if (typeof oilData.symptoms === 'string') {
-                oilData.symptoms = oilData.symptoms.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                oilData.symptoms = (oilData.symptoms as string).split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0);
               }
               await setDoc(doc(oilCollection, oilData.oil_id), oilData, { merge: true });
               successCount++;
