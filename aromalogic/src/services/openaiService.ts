@@ -11,10 +11,12 @@ export async function getOpenAICompletion(prompt: string): Promise<string | null
       messages: [
         {
           role: "system",
-          content: "你是一個專業的芳療師,會以具有NAHA Level3與IFA證照的芳療師身分回答問題"
+          content: "你是一個專業的芳療師,會以具有NAHA Level3與IFA證照的芳療師標準回答問題"
         },
         { role: 'user', content: prompt }],
-      model: 'gpt-4.1-2025-04-14', // You can choose a different model if needed
+      model: 'o4-mini-2025-04-16', // You can choose a different model if needed
+      //o4-mini-2025-04-16 Price $1.1 • $4.4 Input • Output
+      //gpt-4.1-2025-04-14 Price $2 • $8 Input • Output
     });
 
     return chatCompletion.choices[0].message.content;

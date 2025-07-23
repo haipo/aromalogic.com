@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'OpenAITest',
       component: () => import('@/pages/openai-test.vue'),
     },
+    {
+      path: '/gemini-test',
+      name: 'GeminiTest',
+      component: () => import('@/pages/gemini-test.vue'),
+    },
   ],
 })
 
