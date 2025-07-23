@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For more information on how to get this object, see:
@@ -20,3 +20,13 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
+
+// Set session persistence
+//browserLocalPersistence,browserSessionPersistence
+setPersistence(auth, browserSessionPersistence)
+  .catch((error) => {
+    // Handle errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.error(`Firebase Auth persistence error: ${errorCode} - ${errorMessage}`);
+  });

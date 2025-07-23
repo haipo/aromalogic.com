@@ -27,8 +27,9 @@ const router = useRouter();
 onMounted(() => {
   const user = auth.currentUser;
   if (!user) {
-    authDialogMessage.value = "尚未登入或已經閒置過久，請重新登入";
-    showAuthDialog.value = true;
+    //authDialogMessage.value = "尚未登入或已經閒置過久，請重新登入";
+    //showAuthDialog.value = true;
+    redirectToLogin();
   }
 });
 
