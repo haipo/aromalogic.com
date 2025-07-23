@@ -59,6 +59,7 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
+    include: ['papaparse'],
     exclude: [
       'vuetify',
       'vue-router',
