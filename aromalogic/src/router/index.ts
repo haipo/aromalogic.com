@@ -18,6 +18,11 @@ const router = createRouter({
       name: 'Login',
       component: () => import('@/pages/login.vue'),
     },
+    {
+      path: '/openai-test',
+      name: 'OpenAITest',
+      component: () => import('@/pages/openai-test.vue'),
+    },
   ],
 })
 

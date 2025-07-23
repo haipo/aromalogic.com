@@ -47,7 +47,7 @@
       title: '客戶管理',
     },
     {
-      href: 'https://vuetifyjs.com/components/all',
+      href: '/customers/list',
       icon: 'mdi-widgets-outline',
       subtitle: '常用配方的編輯與查詢',
       title: '配方資料庫',
